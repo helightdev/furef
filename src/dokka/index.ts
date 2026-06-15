@@ -1,0 +1,1 @@
+export {parseDokkaDirectory} from './parser';

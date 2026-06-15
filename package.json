@@ -1,0 +1,60 @@
+{
+  "name": "furef",
+  "version": "0.0.1",
+  "description": "Turn DocFX or Dokka output into a Fumadocs source for Next.js documentation sites.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "sideEffects": [
+    "./src/styles.css"
+  ],
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./src/index.tsx",
+      "import": "./src/index.tsx"
+    },
+    "./styles.css": "./src/styles.css",
+    "./components/breadcrumb": {
+      "types": "./src/components/breadcrumb.tsx",
+      "import": "./src/components/breadcrumb.tsx"
+    },
+    "./components/entity-link": {
+      "types": "./src/components/entity-link.tsx",
+      "import": "./src/components/entity-link.tsx"
+    },
+    "./docfx": {
+      "types": "./src/docfx/index.ts",
+      "import": "./src/docfx/index.ts"
+    },
+    "./dokka": {
+      "types": "./src/dokka/index.ts",
+      "import": "./src/dokka/index.ts"
+    },
+    "./utils": {
+      "types": "./src/utils.ts",
+      "import": "./src/utils.ts"
+    }
+  },
+  "peerDependencies": {
+    "@vscode/codicons": "^0.0.45",
+    "fumadocs-core": ">=16",
+    "lucide-react": ">=1",
+    "next": ">=16",
+    "react": ">=19",
+    "react-dom": ">=19"
+  },
+  "dependencies": {
+    "js-yaml": "^4.2.0",
+    "node-html-parser": "^7.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^6.0.3"
+  }
+}

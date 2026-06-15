@@ -1,0 +1,271 @@
+:root {
+  /* ── Symbol colors ──────────────────────────────────────────────── */
+  --furef-color-namespace: #d4d4d4;
+  --furef-color-class: #ee9d28;
+  --furef-color-abstractclass: #ff7675;
+  --furef-color-value: #75beff;
+  --furef-color-struct: #ff77b7;
+  --furef-color-interface: #4ec9b0;
+  --furef-color-enum: #f29e74;
+  --furef-color-method: #b180d7;
+  --furef-color-methodarrow: #ff7675;
+  --furef-color-methodabstract: var(--furef-color-methodarrow);
+  --furef-color-methodvirtual: var(--furef-color-method);
+
+  --furef-color-staticclass: var(--furef-color-enum);
+  --furef-color-kotlinobject: var(--furef-color-enum);
+  --furef-color-enummember: var(--furef-color-enum);
+
+  --furef-color-sealedclass: var(--furef-color-class);
+
+  --furef-color-delegate: var(--furef-color-method);
+  --furef-color-constructor: var(--furef-color-method);
+  --furef-color-methodoverride: var(--furef-color-method);
+  --furef-color-event: var(--furef-color-method);
+  --furef-color-extensionmethod: var(--furef-color-method);
+  --furef-color-operator: var(--furef-color-method);
+
+  --furef-color-property: var(--furef-color-value);
+  --furef-color-field: var(--furef-color-value);
+  --furef-color-constant: var(--furef-color-value);
+
+  /* ── Visibility colors ──────────────────────────────────────────── */
+  --furef-color-protected: #75beff;
+  --furef-color-private: #f14c4c;
+  --furef-color-internal: #cca700;
+}
+
+/* ── Breakable text ────────────────────────────────────────────────── */
+.furef-breakable,
+.docfx-breakable {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+/* ── Active tree label states ──────────────────────────────────────── */
+
+/* Namespace */
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='namespace']) {
+  background-color: color-mix(in oklab, var(--furef-color-namespace) 10%, transparent) !important;
+  color: var(--furef-color-namespace) !important;
+}
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='namespace'])::before {
+  background-color: var(--furef-color-namespace) !important;
+}
+
+/* Static Class */
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='staticclass']) {
+  background-color: color-mix(in oklab, var(--furef-color-staticclass) 10%, transparent) !important;
+  color: var(--furef-color-staticclass) !important;
+}
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='staticclass'])::before {
+  background-color: var(--furef-color-staticclass) !important;
+}
+
+/* Kotlin Object */
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='kotlinobject']) {
+  background-color: color-mix(in oklab, var(--furef-color-kotlinobject) 10%, transparent) !important;
+  color: var(--furef-color-kotlinobject) !important;
+}
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='kotlinobject'])::before {
+  background-color: var(--furef-color-kotlinobject) !important;
+}
+
+/* Class */
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='class']) {
+  background-color: color-mix(in oklab, var(--furef-color-class) 10%, transparent) !important;
+  color: var(--furef-color-class) !important;
+}
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='class'])::before {
+  background-color: var(--furef-color-class) !important;
+}
+
+/* Sealed Class */
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='sealedclass']) {
+  background-color: color-mix(in oklab, var(--furef-color-sealedclass) 10%, transparent) !important;
+  color: var(--furef-color-sealedclass) !important;
+}
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='sealedclass'])::before {
+  background-color: var(--furef-color-sealedclass) !important;
+}
+
+/* Delegate */
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='delegate']) {
+  background-color: color-mix(in oklab, var(--furef-color-delegate) 10%, transparent) !important;
+  color: var(--furef-color-delegate) !important;
+}
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='delegate'])::before {
+  background-color: var(--furef-color-delegate) !important;
+}
+
+/* AbstractClass */
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='abstractclass']) {
+  background-color: color-mix(in oklab, var(--furef-color-abstractclass) 10%, transparent) !important;
+  color: var(--furef-color-abstractclass) !important;
+}
+
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='abstractclass'])::before {
+  background-color: var(--furef-color-abstractclass) !important;
+}
+
+/* Enum */
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='enum']) {
+  background-color: color-mix(in oklab, var(--furef-color-enum) 10%, transparent) !important;
+  color: var(--furef-color-enum) !important;
+}
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='enum'])::before {
+  background-color: var(--furef-color-enum) !important;
+}
+
+/* Enum Member */
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='enummember']) {
+  background-color: color-mix(in oklab, var(--furef-color-enummember) 10%, transparent) !important;
+  color: var(--furef-color-enummember) !important;
+}
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='enummember'])::before {
+  background-color: var(--furef-color-enummember) !important;
+}
+
+/* Struct */
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='struct']) {
+  background-color: color-mix(in oklab, var(--furef-color-struct) 10%, transparent) !important;
+  color: var(--furef-color-struct) !important;
+}
+
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='struct'])::before {
+  background-color: var(--furef-color-struct) !important;
+}
+
+/* Value */
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='value']) {
+  background-color: color-mix(in oklab, var(--furef-color-value) 10%, transparent) !important;
+  color: var(--furef-color-value) !important;
+}
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='value'])::before {
+  background-color: var(--furef-color-value) !important;
+}
+
+/* Interface */
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='interface']) {
+  background-color: color-mix(in oklab, var(--furef-color-interface) 10%, transparent) !important;
+  color: var(--furef-color-interface) !important;
+}
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='interface'])::before {
+  background-color: var(--furef-color-interface) !important;
+}
+
+/* Constructor */
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='constructor']) {
+  background-color: color-mix(in oklab, var(--furef-color-constructor) 10%, transparent) !important;
+  color: var(--furef-color-constructor) !important;
+}
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='constructor'])::before {
+  background-color: var(--furef-color-constructor) !important;
+}
+
+/* Method */
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='method']) {
+  background-color: color-mix(in oklab, var(--furef-color-method) 10%, transparent) !important;
+  color: var(--furef-color-method) !important;
+}
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='method'])::before {
+  background-color: var(--furef-color-method) !important;
+}
+
+/* Method Abstract */
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='methodabstract']) {
+  background-color: color-mix(in oklab, var(--furef-color-methodabstract) 10%, transparent) !important;
+  color: var(--furef-color-methodabstract) !important;
+}
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='methodabstract'])::before {
+  background-color: var(--furef-color-methodabstract) !important;
+}
+
+/* Method Arrow */
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='methodarrow']) {
+  background-color: color-mix(in oklab, var(--furef-color-methodarrow) 10%, transparent) !important;
+  color: var(--furef-color-methodarrow) !important;
+}
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='methodarrow'])::before {
+  background-color: var(--furef-color-methodarrow) !important;
+}
+
+/* Method Virtual */
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='methodvirtual']) {
+  background-color: color-mix(in oklab, var(--furef-color-methodvirtual) 10%, transparent) !important;
+  color: var(--furef-color-methodvirtual) !important;
+}
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='methodvirtual'])::before {
+  background-color: var(--furef-color-methodvirtual) !important;
+}
+
+/* Method Override */
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='methodoverride']) {
+  background-color: color-mix(in oklab, var(--furef-color-methodoverride) 10%, transparent) !important;
+  color: var(--furef-color-methodoverride) !important;
+}
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='methodoverride'])::before {
+  background-color: var(--furef-color-methodoverride) !important;
+}
+
+/* Extension Method */
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='extensionmethod']) {
+  background-color: color-mix(in oklab, var(--furef-color-extensionmethod) 10%, transparent) !important;
+  color: var(--furef-color-extensionmethod) !important;
+}
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='extensionmethod'])::before {
+  background-color: var(--furef-color-extensionmethod) !important;
+}
+
+/* Operator */
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='operator']) {
+  background-color: color-mix(in oklab, var(--furef-color-operator) 10%, transparent) !important;
+  color: var(--furef-color-operator) !important;
+}
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='operator'])::before {
+  background-color: var(--furef-color-operator) !important;
+}
+
+/* Property */
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='property']) {
+  background-color: color-mix(in oklab, var(--furef-color-property) 10%, transparent) !important;
+  color: var(--furef-color-property) !important;
+}
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='property'])::before {
+  background-color: var(--furef-color-property) !important;
+}
+
+/* Field */
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='field']) {
+  background-color: color-mix(in oklab, var(--furef-color-field) 10%, transparent) !important;
+  color: var(--furef-color-field) !important;
+}
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='field'])::before {
+  background-color: var(--furef-color-field) !important;
+}
+
+/* Constant */
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='constant']) {
+  background-color: color-mix(in oklab, var(--furef-color-constant) 10%, transparent) !important;
+  color: var(--furef-color-constant) !important;
+}
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='constant'])::before {
+  background-color: var(--furef-color-constant) !important;
+}
+
+/* Event */
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='event']) {
+  background-color: color-mix(in oklab, var(--furef-color-event) 10%, transparent) !important;
+  color: var(--furef-color-event) !important;
+}
+a[data-active='true']:has(.furef-tree-label[data-furef-symbol='event'])::before {
+  background-color: var(--furef-color-event) !important;
+}
+
+/* Inherit color for tree label text inside active links */
+a[data-active='true']:has(.furef-tree-label) .furef-tree-label,
+a[data-active='true']:has(.furef-tree-label) .furef-tree-label * {
+  color: inherit !important;
+}
