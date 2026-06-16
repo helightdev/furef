@@ -144,7 +144,7 @@ export function FREntitySymbolLink({path, uid, baseUrl, mode, kind, label, class
     return (
         <a
             href={entity?.href ?? entityHref({path, uid, baseUrl, mode})}
-            className={`inline-flex items-baseline gap-[0.3em] rounded bg-fd-muted px-[0.35em] pb-[0.08em] pt-[0.14em] align-baseline font-mono text-[0.85em] font-medium leading-tight no-underline hover:bg-fd-accent ${className ?? ''}`}
+            className={`inline-flex items-baseline gap-[0.3em] rounded border bg-fd-muted px-[0.35em] align-baseline font-mono text-[0.85em] font-medium leading-tight no-underline hover:bg-fd-accent ${className ?? ''}`}
             style={{color: info.color}}
             title={entityLinkTitle()}
         >
