@@ -1,6 +1,6 @@
 {
   "name": "furef",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Turn DocFX or Dokka output into a Fumadocs source for Next.js documentation sites.",
   "type": "module",
   "private": true,

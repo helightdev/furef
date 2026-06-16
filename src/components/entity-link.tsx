@@ -25,8 +25,7 @@ type FREntityLinkData = {
 const entityRegistry = new Map<string, FREntityLinkData>();
 
 function entityHref({path = '', uid, baseUrl = '', mode = 'pages'}: Pick<FREntityLinkProps, 'path' | 'uid' | 'baseUrl' | 'mode'>) {
-    if (!path) return `#${uidAnchor(uid)}`;
-    const root = joinUrl(baseUrl, path);
+    const root = joinUrl(baseUrl, path || 'reference');
     if (mode === 'single') return `${root}#${uidAnchor(uid)}`;
     return joinUrl(root, uidToSegment(uid));
 }
@@ -56,6 +55,43 @@ function textSummary(value: string | undefined) {
 
 function registerEntity(path: string, data: FREntityLinkData) {
     entityRegistry.set(registryKey(path, data.uid), data);
+}
+
+function uidMatchScore(requestedUid: string, candidateUid: string) {
+    const requested = requestedUid.toLowerCase();
+    const requestedSegment = uidToSegment(requestedUid).toLowerCase();
+    const candidate = candidateUid.toLowerCase();
+    const candidateSegment = uidToSegment(candidateUid).toLowerCase();
+    const values = new Set([candidate, candidateSegment]);
+
+    if (values.has(requested) || values.has(requestedSegment)) return 0;
+    if ([...values].some((value) => value.endsWith(`.${requested}`) || value.endsWith(`.${requestedSegment}`))) return 1;
+    if ([...values].some((value) => value.endsWith(requested) || value.endsWith(requestedSegment))) return 2;
+    if ([...values].some((value) => value.includes(requested) || value.includes(requestedSegment))) return 3;
+
+    return undefined;
+}
+
+function bestEntityMatch(matches: FREntityLinkData[]) {
+    return matches
+        .sort((left, right) => left.uid.length - right.uid.length || left.href.length - right.href.length)
+        .at(0);
+}
+
+function resolveEntityFromEntries(entries: Array<[string, FREntityLinkData]>, uid: string) {
+    const matches = entries
+        .map(([, value]) => ({value, score: uidMatchScore(uid, value.uid)}))
+        .filter((match): match is {value: FREntityLinkData; score: number} => match.score !== undefined)
+        .sort((left, right) => (
+            left.score - right.score
+            || left.value.uid.length - right.value.uid.length
+            || left.value.href.length - right.value.href.length
+        ));
+
+    const bestScore = matches[0]?.score;
+    if (bestScore === undefined) return undefined;
+
+    return bestEntityMatch(matches.filter((match) => match.score === bestScore).map((match) => match.value));
 }
 
 export function registerFREntitySource(config: ResolvedFRSourceOptions, entries: FREntry[]) {
@@ -96,14 +132,17 @@ export function registerFREntitySource(config: ResolvedFRSourceOptions, entries:
 function resolveEntity({path, uid, baseUrl}: Pick<FREntityLinkProps, 'path' | 'uid' | 'baseUrl'>) {
     if (path) {
         return entityRegistry.get(registryKey(joinUrl(baseUrl, path), uid))
-            ?? entityRegistry.get(registryKey(path, uid));
+            ?? entityRegistry.get(registryKey(path, uid))
+            ?? resolveEntityFromEntries(
+                [...entityRegistry.entries()].filter(([key]) => (
+                    key.startsWith(`${trimSlashes(joinUrl(baseUrl, path))}::`)
+                    || key.startsWith(`${trimSlashes(path)}::`)
+                )),
+                uid,
+            );
     }
 
-    const matches = [...entityRegistry.entries()]
-        .filter(([key]) => key.endsWith(`::${uid}`))
-        .map(([, value]) => value);
-    const uniqueHrefs = new Set(matches.map((match) => match.href));
-    return uniqueHrefs.size === 1 ? matches[0] : undefined;
+    return resolveEntityFromEntries([...entityRegistry.entries()], uid);
 }
 
 function symbolKey(kind: string | undefined) {

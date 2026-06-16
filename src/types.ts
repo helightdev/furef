@@ -55,6 +55,7 @@ export type ResolvedFRSourceOptions = {
 export type FRSourceContextValue = {
     config: ResolvedFRSourceOptions;
     localUids: Set<string>;
+    localUidUrls: Map<string, string>;
     uidToSymbolKind: Map<string, string>;
 };
 

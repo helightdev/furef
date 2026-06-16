@@ -73,6 +73,21 @@ function uidToUrl(uid: string, config: ResolvedFRSourceOptions): string {
     return joinUrl(config.baseUrl, config.path, uidToSegment(uid));
 }
 
+function uidMatchScore(requestedUid: string, candidateUid: string) {
+    const requested = requestedUid.toLowerCase();
+    const requestedSegment = uidToSegment(requestedUid).toLowerCase();
+    const candidate = candidateUid.toLowerCase();
+    const candidateSegment = uidToSegment(candidateUid).toLowerCase();
+    const values = new Set([candidate, candidateSegment]);
+
+    if (values.has(requested) || values.has(requestedSegment)) return 0;
+    if ([...values].some((value) => value.endsWith(`.${requested}`) || value.endsWith(`.${requestedSegment}`))) return 1;
+    if ([...values].some((value) => value.endsWith(requested) || value.endsWith(requestedSegment))) return 2;
+    if ([...values].some((value) => value.includes(requested) || value.includes(requestedSegment))) return 3;
+
+    return undefined;
+}
+
 function symbolInfo(kind: string | undefined) {
     return resolveSymbolKind(kind);
 }
@@ -454,10 +469,10 @@ function linkForType(
     const ref = refs[type];
     if (ref?.href?.startsWith('http')) return ref.href;
     if (ref?.isExternal && ref.href) return ref.href;
-    if (ref?.uid && context.localUids.has(ref.uid)) return uidToUrl(ref.uid, context.config);
+    if (ref?.uid && context.localUidUrls.has(ref.uid)) return context.localUidUrls.get(ref.uid);
 
     const localUid = resolveLocalUid(type, context);
-    if (localUid) return uidToUrl(localUid, context.config);
+    if (localUid) return context.localUidUrls.get(localUid) ?? uidToUrl(localUid, context.config);
 
     return externalLinkForUid(ref?.uid ?? type, context.config);
 }
@@ -466,10 +481,13 @@ function linkForUid(uid: string, refs: Record<string, FRReference>, context: FRS
     const ref = refs[uid];
     if (ref?.href?.startsWith('http')) return ref.href;
     if (ref?.isExternal && ref.href) return ref.href;
-    if (context.localUids.has(uid)) return uidToUrl(uid, context.config);
+    if (context.localUidUrls.has(uid)) return context.localUidUrls.get(uid);
 
     const memberOwner = findMemberOwnerUid(uid);
-    if (memberOwner && context.localUids.has(memberOwner)) return uidToUrl(memberOwner, context.config);
+    if (memberOwner && context.localUidUrls.has(memberOwner)) return context.localUidUrls.get(memberOwner);
+
+    const localUid = resolveLocalUid(ref?.uid ?? uid, context);
+    if (localUid) return context.localUidUrls.get(localUid) ?? uidToUrl(localUid, context.config);
 
     return externalLinkForUid(ref?.uid ?? uid, context.config);
 }
@@ -499,15 +517,19 @@ function findMemberOwnerUid(uid: string) {
 
 function resolveLocalUid(type: string, context: FRSourceContextValue) {
     if (context.localUids.has(type)) return type;
-    if (type.length === 1 || !type.includes('.')) return undefined;
     if (
+        type.includes('.') &&
         context.config.localUidPrefixes.length > 0 &&
         !context.config.localUidPrefixes.some((prefix) => type === prefix.slice(0, -1) || type.startsWith(prefix))
     ) {
         return undefined;
     }
 
-    return [...context.localUids].find((uid) => uid.startsWith(`${type}\``));
+    return [...context.localUids]
+        .map((uid) => ({uid, score: uidMatchScore(type, uid)}))
+        .filter((match): match is {uid: string; score: number} => match.score !== undefined)
+        .sort((left, right) => left.score - right.score || left.uid.length - right.uid.length)
+        .at(0)?.uid;
 }
 
 function renderLinkedLabel(label: string, href: string | undefined, compact = false, plain = false) {
@@ -1704,18 +1726,6 @@ export function createFurefSource(options: FRSourceOptions = {}, parser: FRSourc
         ...parsed.toc,
         items: filterTocItems(parsed.toc.items, hiddenUidPrefixes),
     };
-    const localUids = new Set<string>();
-    const uidToSymbolKind = new Map<string, string>();
-    const uidToSummary = new Map<string, string>();
-
-    for (const entry of entries) {
-        localUids.add(entry.item.uid);
-        uidToSymbolKind.set(entry.item.uid, getItemSymbolKind(entry.item));
-        if (entry.item.summary) {
-            uidToSummary.set(entry.item.uid, entry.item.summary);
-        }
-    }
-
     const config: ResolvedFRSourceOptions = {
         dir: sourceDir,
         mode: options.mode ?? 'pages',
@@ -1738,9 +1748,34 @@ export function createFurefSource(options: FRSourceOptions = {}, parser: FRSourc
         compactTreeNames: options.compactTreeNames ?? false,
         memberStyle: options.memberStyle ?? 'table',
     };
+    const localUids = new Set<string>();
+    const localUidUrls = new Map<string, string>();
+    const uidToSymbolKind = new Map<string, string>();
+    const uidToSummary = new Map<string, string>();
+
+    for (const entry of entries) {
+        const itemUrl = uidToUrl(entry.item.uid, config);
+        localUids.add(entry.item.uid);
+        localUidUrls.set(entry.item.uid, itemUrl);
+        uidToSymbolKind.set(entry.item.uid, getItemSymbolKind(entry.item));
+        if (entry.item.summary) {
+            uidToSummary.set(entry.item.uid, entry.item.summary);
+        }
+
+        for (const member of entry.members) {
+            localUids.add(member.uid);
+            localUidUrls.set(member.uid, itemUrl);
+            uidToSymbolKind.set(member.uid, getItemSymbolKind(member));
+            if (member.summary) {
+                uidToSummary.set(member.uid, member.summary);
+            }
+        }
+    }
+
     const context: FRSourceContextValue = {
         config,
         localUids,
+        localUidUrls,
         uidToSymbolKind,
     };
     registerFREntitySource(config, entries);
